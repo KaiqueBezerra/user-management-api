@@ -1,0 +1,121 @@
+@baseUrl = http://localhost:3333/api
+
+# Health
+# @name Health
+GET {{baseUrl}}/health
+
+### POST
+
+# Create User
+# @name createUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Admin",
+  "email": "admin@example.com",
+  "role": "admin"
+}
+
+###
+
+# Disable User
+# @name disableUser
+POST {{baseUrl}}/users/{{userId}}/7ec0617f-2a59-428e-89e0-afadea712666/deactivate
+Content-Type: application/json
+
+{
+  "deactivated_reason": "Disabled by admin for test"
+}
+
+### GET
+
+# Captura o ID do usuário criado para uso nas próximas requisições
+@userId = {{createUser.response.body.userId}}
+
+###
+
+# Captura o ID da desativação criada para uso nas próximas requisições
+@deactivatedId = {{disableUser.response.body.id}}
+
+###
+
+# Get All Users
+# @name getAllUsers
+GET {{baseUrl}}/users
+
+###
+
+# Get User By ID
+# @name getUserById
+GET {{baseUrl}}/users/{{userId}}
+
+###
+
+# Get Activated Users
+# @name getActivatedUsers
+GET {{baseUrl}}/users/activated
+
+###
+
+# Get Disabled Users
+# @name getDeactivatedUsers
+GET {{baseUrl}}/users/deactivated
+
+###
+
+# Get Deactivated User
+# @name getDeactivatedUser
+GET {{baseUrl}}/users/{{userId}}/deactivated
+
+###
+
+# Get Deactivations
+# @name getDeactivations
+GET {{baseUrl}}/deactivations
+
+###
+
+# Get User Deactivation History
+# @name getUserDeactivationHistory
+GET {{baseUrl}}/users/{{userId}}/deactivation-history?field=deactivation_reasons,deactivation_dates,reactivation_reasons,reactivation_dates
+
+###
+
+# Get Deactivations History
+# @name getDeactivationsHistory
+GET {{baseUrl}}/deactivation-history
+
+### UPDATE
+
+# Update User
+# @name updateUser
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "name": "Kaique"
+}
+
+###
+
+# Reactivate User
+# @name reactivateUser
+PUT {{baseUrl}}/users/{{userId}}/900607da-61d1-4915-9d48-a0e1ba2f3b73/reactivate
+Content-Type: application/json
+
+{
+  "reactivated_reason": "Reactivated by admin for test"
+}
+
+### DELETE
+
+# Delete User
+# @name deleteUser
+DELETE {{baseUrl}}/users/{{userId}}
+
+###
+
+# Delete Deactivated User
+# @name deleteDeactivatedUser
+DELETE {{baseUrl}}/users/{{deactivatedId}}/deactivated

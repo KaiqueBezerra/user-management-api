@@ -1,0 +1,10 @@
+services:
+  user-management-api-pg:
+    container_name: user_management_db
+    image: bitnami/postgresql:latest
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: user_management_db
+    ports:
+      - 5432:5432
