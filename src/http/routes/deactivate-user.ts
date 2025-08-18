@@ -3,16 +3,16 @@ import { z } from "zod";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
-    "/api/users/:userId/:adminId/deactivate",
-
+    "/api/users/:userId/deactivate",
     {
+      preHandler: [authMiddleware],
       schema: {
         params: z.object({
           userId: z.uuid(),
-          adminId: z.uuid(),
         }),
         body: z.object({
           deactivated_reason: z
@@ -23,20 +23,11 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
     },
 
     async (request, reply) => {
-      const { userId, adminId } = request.params;
+      const { userId } = request.params;
       const { deactivated_reason } = request.body;
+      const { id: adminId } = request.user as { id: string };
 
       try {
-        const admin = await db
-          .select()
-          .from(schema.users)
-          .where(eq(schema.users.id, adminId))
-          .limit(1);
-
-        if (!admin[0] || admin[0].role !== "admin") {
-          return reply.status(403).send({ message: "Unauthorized" });
-        }
-
         if (userId === adminId) {
           return reply.status(400).send({ message: "Cannot deactivate self" });
         }

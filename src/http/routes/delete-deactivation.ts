@@ -3,12 +3,14 @@ import { z } from "zod";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
-export const deleteDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
+export const deleteDeactivationUserRoute: FastifyPluginCallbackZod = (app) => {
   app.delete(
     "/api/users/:deactivatedId/deactivated",
 
     {
+      preHandler: [authMiddleware],
       schema: {
         params: z.object({
           deactivatedId: z.uuid(),

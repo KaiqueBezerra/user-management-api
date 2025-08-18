@@ -3,11 +3,13 @@ import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import z from "zod";
 import { eq } from "drizzle-orm";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 export const getUsersByIdRoute: FastifyPluginCallbackZod = (app) => {
   app.get(
     "/api/users/:userId",
     {
+      preHandler: [authMiddleware],
       schema: {
         params: z.object({
           userId: z.uuid(),

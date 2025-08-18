@@ -12,79 +12,101 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Admin",
+  "name": "admin",
   "email": "admin@example.com",
+  "password": "123456",
   "role": "admin"
 }
 
 ###
 
-# Disable User
-# @name disableUser
-POST {{baseUrl}}/users/{{userId}}/7ec0617f-2a59-428e-89e0-afadea712666/deactivate
+# Login
+# @name login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "deactivated_reason": "Disabled by admin for test"
+  "email": "admin@example.com",
+  "password": "123456"
+}
+
+###
+
+# Deactivate User
+# @name deactivateUser
+POST {{baseUrl}}/users/{{userId}}/deactivate
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "deactivated_reason": "Deactivate by admin for test"
 }
 
 ### GET
 
-# Captura o ID do usuário criado para uso nas próximas requisições
+# Capture the ID of the user created to use in the next requests
 @userId = {{createUser.response.body.userId}}
 
 ###
 
-# Captura o ID da desativação criada para uso nas próximas requisições
-@deactivatedId = {{disableUser.response.body.id}}
+# Capture the ID of the deactivation created to use in the next requests
+@deactivatedId = {{deactivateUser.response.body.id}}
 
 ###
 
 # Get All Users
 # @name getAllUsers
 GET {{baseUrl}}/users
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get User By ID
 # @name getUserById
 GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get Activated Users
 # @name getActivatedUsers
 GET {{baseUrl}}/users/activated
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get Disabled Users
 # @name getDeactivatedUsers
 GET {{baseUrl}}/users/deactivated
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get Deactivated User
 # @name getDeactivatedUser
 GET {{baseUrl}}/users/{{userId}}/deactivated
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get Deactivations
 # @name getDeactivations
 GET {{baseUrl}}/deactivations
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get User Deactivation History
 # @name getUserDeactivationHistory
 GET {{baseUrl}}/users/{{userId}}/deactivation-history?field=deactivation_reasons,deactivation_dates,reactivation_reasons,reactivation_dates
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Get Deactivations History
 # @name getDeactivationsHistory
 GET {{baseUrl}}/deactivation-history
+Authorization: Bearer {{login.response.body.token}}
 
 ### UPDATE
 
@@ -92,17 +114,19 @@ GET {{baseUrl}}/deactivation-history
 # @name updateUser
 PUT {{baseUrl}}/users/{{userId}}
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
 
 {
-  "name": "Kaique"
+  "name": "Kaique Bezerra"
 }
 
 ###
 
 # Reactivate User
 # @name reactivateUser
-PUT {{baseUrl}}/users/{{userId}}/900607da-61d1-4915-9d48-a0e1ba2f3b73/reactivate
+PUT {{baseUrl}}/users/{{userId}}/reactivate
 Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
 
 {
   "reactivated_reason": "Reactivated by admin for test"
@@ -113,9 +137,11 @@ Content-Type: application/json
 # Delete User
 # @name deleteUser
 DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{login.response.body.token}}
 
 ###
 
 # Delete Deactivated User
 # @name deleteDeactivatedUser
 DELETE {{baseUrl}}/users/{{deactivatedId}}/deactivated
+Authorization: Bearer {{login.response.body.token}}

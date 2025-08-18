@@ -3,6 +3,7 @@ import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
 import z from "zod";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
   app
@@ -10,6 +11,7 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
   app.get(
     "/api/users/:userId/deactivation-history",
     {
+      preHandler: [authMiddleware],
       schema: {
         params: z.object({
           userId: z.uuid(),

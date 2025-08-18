@@ -3,12 +3,14 @@ import { z } from "zod";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.put(
     "/api/users/:userId",
 
     {
+      preHandler: [authMiddleware],
       schema: {
         body: z.object({
           name: z.string().min(2, "Name must be at least 2 characters"),

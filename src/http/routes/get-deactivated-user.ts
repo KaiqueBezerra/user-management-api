@@ -4,6 +4,7 @@ import { schema } from "../../db/schema/index.ts";
 import { and, eq, isNull } from "drizzle-orm";
 import z from "zod";
 import { alias } from "drizzle-orm/pg-core";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 const userToDeactivate = alias(schema.users, "userToDeactivate");
 const deactivatedBy = alias(schema.users, "deactivatedBy");
@@ -12,6 +13,8 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
   app.get(
     "/api/users/:userId/deactivated",
     {
+      preHandler: [authMiddleware],
+
       schema: {
         params: z.object({
           userId: z.uuid(),

@@ -16,9 +16,9 @@ Esta API fornece endpoints para operações CRUD (Criar, Ler, Atualizar, Deletar
 - **Framework Web:** [Fastify](https://www.fastify.io/) - Um framework web de alta performance e baixo overhead para Node.js.
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/) - Para um código mais seguro, legível e escalável.
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team/) - Um ORM "headless" para TypeScript, que oferece total controle e segurança de tipos sobre as queries SQL.
-- **Validação:** [Zod](https://zod.dev/) (inferido, comum com Fastify) - Para declaração e validação de schemas.
+- **Validação:** [Zod](https://zod.dev/) - Para declaração e validação de schemas.
 
-## 🚀 Começando
+## 🚀 Começando (Setup)
 
 Siga os passos abaixo para configurar e executar o projeto localmente.
 

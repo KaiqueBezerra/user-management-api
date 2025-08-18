@@ -3,12 +3,14 @@ import { z } from "zod";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { and, eq, isNull } from "drizzle-orm";
+import { authMiddleware } from "../../middlewares/auth-middleware.ts";
 
 export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.put(
-    "/api/users/:userId/:adminId/reactivate",
+    "/api/users/:userId/reactivate",
 
     {
+      preHandler: [authMiddleware],
       schema: {
         body: z.object({
           reactivated_reason: z
@@ -17,13 +19,13 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         }),
         params: z.object({
           userId: z.uuid(),
-          adminId: z.uuid(),
         }),
       },
     },
     async (request, reply) => {
       const { reactivated_reason } = request.body;
-      const { userId, adminId } = request.params;
+      const { userId } = request.params;
+      const { id: adminId } = request.user as { id: string };
 
       try {
         const admin = await db
