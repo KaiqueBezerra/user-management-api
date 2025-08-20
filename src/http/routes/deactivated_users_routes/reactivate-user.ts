@@ -1,9 +1,9 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { and, eq, isNull } from "drizzle-orm";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { db } from "../../../db/connection.ts";
+import { schema } from "../../../db/schema/index.ts";
 
 export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.put(
@@ -12,6 +12,9 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
     {
       preHandler: [authMiddleware],
       schema: {
+        tags: ["Deactivated Users"],
+        summary: "Reactivate user",
+        description: "Reactivate a deactivated user.",
         body: z.object({
           reactivated_reason: z
             .string()
@@ -20,6 +23,17 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         params: z.object({
           userId: z.uuid(),
         }),
+        response: {
+          200: z.object({ id: z.uuid(), userId: z.uuid(), adminId: z.uuid() }),
+          400: z.object({ message: z.string().default("Bad request") }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+          403: z.object({ message: z.string().default("Unauthorized") }),
+          404: z.object({
+            message: z.string().default("Deactivated user not found"),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -81,7 +95,7 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         return reply.status(200).send({
           id: updatedDeactivatedUsers.id,
           userId: updatedDeactivatedUsers.user_id,
-          adminId: updatedDeactivatedUsers.reactivated_by,
+          adminId: adminId,
         });
       } catch (error) {
         console.error("Reactivate user error:", error);

@@ -1,9 +1,9 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { db } from "../../../db/connection.ts";
+import { schema } from "../../../db/schema/index.ts";
 
 export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.put(
@@ -12,12 +12,24 @@ export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
     {
       preHandler: [authMiddleware],
       schema: {
+        tags: ["Users"],
+        summary: "Update user",
+        description: "Update a user.",
         body: z.object({
           name: z.string().min(2, "Name must be at least 2 characters"),
         }),
         params: z.object({
           userId: z.uuid(),
         }),
+        response: {
+          200: z.object({
+            userId: z.uuid(),
+          }),
+          404: z.object({ message: z.string().default("User not found") }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
     async (request, reply) => {

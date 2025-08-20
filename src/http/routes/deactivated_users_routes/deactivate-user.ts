@@ -1,9 +1,9 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { db } from "../../../db/connection.ts";
+import { schema } from "../../../db/schema/index.ts";
 
 export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -11,6 +11,9 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
     {
       preHandler: [authMiddleware],
       schema: {
+        tags: ["Deactivated Users"],
+        summary: "Deactivate user",
+        description: "Deactivate a user.",
         params: z.object({
           userId: z.uuid(),
         }),
@@ -19,6 +22,14 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
             .string()
             .min(2, "Reason must be at least 2 characters"),
         }),
+        response: {
+          200: z.object({ id: z.uuid(), userId: z.uuid(), adminId: z.uuid() }),
+          201: z.object({ id: z.uuid(), userId: z.uuid(), adminId: z.uuid() }),
+          400: z.object({ message: z.string().default("Bad request") }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
 

@@ -7,14 +7,13 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users.ts";
 
-export const user_deactivation_history = pgTable(
-  "user_deactivation_history",
+export const users_deactivation_history = pgTable(
+  "users_deactivation_history",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-
     user_id: uuid("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id),
 
     // Arrays de motivos e datas
     deactivation_reasons: text("deactivation_reasons")

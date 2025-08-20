@@ -1,9 +1,9 @@
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
+import { db } from "../../../db/connection.ts";
+import { schema } from "../../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { env } from "../../env.ts";
+import { env } from "../../../env.ts";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod";
 
@@ -12,10 +12,24 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
     "/api/auth/login",
     {
       schema: {
+        tags: ["Auth"],
+        summary: "Login",
+        description: "Log in with email and password.",
         body: z.object({
           email: z.email("Invalid email format"),
           password: z.string().min(6, "Password must be at least 6 characters"),
         }),
+        response: {
+          201: z.object({
+            token: z.string(),
+          }),
+          401: z.object({
+            message: z.string().default("Invalid email or password"),
+          }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -50,7 +64,8 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
 
         return reply.status(201).send({ token });
       } catch (error) {
-        return reply.status(401).send(error);
+        console.error("Login error:", error);
+        return reply.status(500).send({ message: "Internal server error" });
       }
     }
   );

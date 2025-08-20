@@ -1,9 +1,20 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
 import z from "zod";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { db } from "../../../db/connection.ts";
+import { schema } from "../../../db/schema/index.ts";
+
+const userDeactivationHistorySchema = z.object({
+  id: z.uuid(),
+  user_id: z.uuid(),
+  deactivation_reasons: z.array(z.string()),
+  deactivation_dates: z.array(z.date()),
+  reactivation_reasons: z.array(z.string()).nullable(),
+  reactivation_dates: z.array(z.date()).nullable(),
+  deactivations_by_admin: z.array(z.string()),
+  reactivations_by_admin: z.array(z.string()).nullable(),
+});
 
 export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
   app
@@ -13,12 +24,30 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
     {
       preHandler: [authMiddleware],
       schema: {
+        tags: ["Deactivated Users History"],
+        summary: "Get user deactivation history",
+        description: "Get a user deactivation history.",
         params: z.object({
           userId: z.uuid(),
         }),
         querystring: z.object({
           field: z.string().optional(),
         }),
+        response: {
+          200: z.union([
+            userDeactivationHistorySchema,
+            z.record(z.string(), z.any()), // permite objetos com chaves dinâmicas
+          ]),
+          400: z.object({
+            message: z.string().default("Bad request"),
+          }),
+          404: z.object({
+            message: z.string().default("User deactivation history not found"),
+          }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -28,8 +57,8 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
       try {
         const result = await db
           .select()
-          .from(schema.user_deactivation_history)
-          .where(eq(schema.user_deactivation_history.user_id, userId));
+          .from(schema.users_deactivation_history)
+          .where(eq(schema.users_deactivation_history.user_id, userId));
 
         if (result.length === 0) {
           return reply

@@ -1,9 +1,9 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { eq } from "drizzle-orm";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { schema } from "../../../db/schema/index.ts";
+import { db } from "../../../db/connection.ts";
 
 export const deleteDeactivationUserRoute: FastifyPluginCallbackZod = (app) => {
   app.delete(
@@ -12,9 +12,22 @@ export const deleteDeactivationUserRoute: FastifyPluginCallbackZod = (app) => {
     {
       preHandler: [authMiddleware],
       schema: {
+        tags: ["Deactivated Users"],
+        summary: "Delete deactivated user",
+        description: "Delete a deactivated user.",
         params: z.object({
           deactivatedId: z.uuid(),
         }),
+        response: {
+          200: z.object({
+            message: z
+              .string()
+              .default("Deactivated user deleted successfully"),
+          }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
     async (request, reply) => {

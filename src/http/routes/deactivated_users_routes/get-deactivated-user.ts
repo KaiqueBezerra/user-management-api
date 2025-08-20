@@ -1,10 +1,10 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { and, eq, isNull } from "drizzle-orm";
 import z from "zod";
 import { alias } from "drizzle-orm/pg-core";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { schema } from "../../../db/schema/index.ts";
+import { db } from "../../../db/connection.ts";
 
 const userToDeactivate = alias(schema.users, "userToDeactivate");
 const deactivatedBy = alias(schema.users, "deactivatedBy");
@@ -16,9 +16,30 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
       preHandler: [authMiddleware],
 
       schema: {
+        tags: ["Deactivated Users"],
+        summary: "Get deactivated user",
+        description: "Get a deactivated user.",
         params: z.object({
           userId: z.uuid(),
         }),
+        response: {
+          200: z.object({
+            deactivatedUserId: z.uuid(),
+            deactivatedUserName: z.string(),
+            deactivatedUserEmail: z.email(),
+            deactivated_reason: z.string(),
+            deactivatedAt: z.date(),
+            deactivatedById: z.uuid(),
+            deactivatedByName: z.string(),
+            deactivatedByEmail: z.email(),
+          }),
+          404: z.object({
+            message: z.string().default("Deactivated user not found"),
+          }),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
       },
     },
     async (request, reply) => {
@@ -37,11 +58,11 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
             deactivatedByEmail: deactivatedBy.email,
           })
           .from(schema.deactivated_users)
-          .leftJoin(
+          .innerJoin(
             userToDeactivate,
             eq(schema.deactivated_users.user_id, userToDeactivate.id)
           )
-          .leftJoin(
+          .innerJoin(
             deactivatedBy,
             eq(schema.deactivated_users.deactivated_by, deactivatedBy.id)
           )
@@ -54,7 +75,7 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
 
         if (result.length === 0) {
           return reply.status(404).send({
-            message: "User not found",
+            message: "Deactivated user not found",
           });
         }
 

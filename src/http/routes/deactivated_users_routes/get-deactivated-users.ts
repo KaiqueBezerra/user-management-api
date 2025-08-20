@@ -1,13 +1,35 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
-import { db } from "../../db/connection.ts";
-import { schema } from "../../db/schema/index.ts";
 import { and, eq, exists, isNull } from "drizzle-orm";
-import { authMiddleware } from "../../middlewares/auth-middleware.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
+import { schema } from "../../../db/schema/index.ts";
+import { db } from "../../../db/connection.ts";
+import z from "zod";
 
 export const getDeactivatedUsersRoute: FastifyPluginCallbackZod = (app) => {
   app.get(
     "/api/users/deactivated",
-    { preHandler: [authMiddleware] },
+    {
+      preHandler: [authMiddleware],
+      schema: {
+        tags: ["Deactivated Users"],
+        summary: "Get deactivated users",
+        description: "Get a list of all deactivated users.",
+        response: {
+          200: z.array(
+            z.object({
+              id: z.uuid(),
+              name: z.string(),
+              email: z.email(),
+              created_at: z.date(),
+              updated_at: z.date().nullable(),
+            })
+          ),
+          500: z.object({
+            message: z.string().default("Internal server error"),
+          }),
+        },
+      },
+    },
     async (_request, reply) => {
       try {
         const result = await db

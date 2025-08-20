@@ -1,28 +1,48 @@
 import { fastifyCors } from "@fastify/cors";
 import { fastify } from "fastify";
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "./env.ts";
-import { createUsersRoute } from "./http/routes/create-user.ts";
-import { getUsersRoute } from "./http/routes/get-users.ts";
-import { getUsersByIdRoute } from "./http/routes/get-user-by-id.ts";
-import { updateUserRoute } from "./http/routes/update-user.ts";
-import { getActivatedUsersRoute } from "./http/routes/get-activated-users.ts";
-import { getDeactivationsRoute } from "./http/routes/get-deactivations.ts";
-import { deactivateUserRoute } from "./http/routes/deactivate-user.ts";
-import { getDeactivatedUsersRoute } from "./http/routes/get-deactivated-users.ts";
-import { getDeactivatedUserRoute } from "./http/routes/get-deactivated-user.ts";
-import { deleteUserRoute } from "./http/routes/delete-user.ts";
-import { reactivateUserRoute } from "./http/routes/reactivate-user.ts";
-import { getUserDeactivationHistoryRoute } from "./http/routes/get-user-deactivation-history.ts";
-import { getDeactivationsHistoryRoute } from "./http/routes/get-users-deactivation-history.ts";
-import { authLoginRoute } from "./http/routes/login.ts";
-import { deleteDeactivationUserRoute } from "./http/routes/delete-deactivation.ts";
+import { appRoutes } from "./http/routes/index.ts";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import z from "zod";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
+
+// Swagger (OpenAPI)
+await app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "User Management API",
+      description: "API de gerenciamento de usuários",
+      version: "1.0.0",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  transform: jsonSchemaTransform,
+});
+
+await app.register(fastifySwaggerUi, {
+  routePrefix: "/docs", // acess docs at http://localhost:3333/docs
+});
 
 app.register(fastifyCors, {
   origin: "http://localhost:5173",
@@ -31,27 +51,23 @@ app.register(fastifyCors, {
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
 
-app.get("/api/health", () => {
-  return "OK";
-});
+app.get(
+  "/api/health",
+  {
+    schema: {
+      tags: ["Health"],
+      summary: "Health check",
+      description: "Check if the API is running.",
+      response: {
+        200: z.string().default("OK"),
+      },
+    },
+  },
+  () => {
+    return "OK";
+  }
+);
 
-app.register(createUsersRoute);
-app.register(getUsersRoute);
-app.register(getUsersByIdRoute);
-app.register(updateUserRoute);
-app.register(deleteUserRoute);
-
-app.register(getActivatedUsersRoute);
-app.register(getDeactivatedUsersRoute);
-app.register(deactivateUserRoute);
-app.register(getDeactivationsRoute);
-app.register(getDeactivatedUserRoute);
-app.register(deleteDeactivationUserRoute);
-app.register(reactivateUserRoute);
-
-app.register(getUserDeactivationHistoryRoute);
-app.register(getDeactivationsHistoryRoute);
-
-app.register(authLoginRoute);
+app.register(appRoutes);
 
 app.listen({ port: env.PORT });
