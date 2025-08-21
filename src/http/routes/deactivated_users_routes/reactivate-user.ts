@@ -56,7 +56,7 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
           return reply.status(400).send({ message: "Cannot reactivate self" });
         }
 
-        // Verifica se o usuário está desativado (reactivated_at IS NULL)
+        // Checks if the user is deactivated (reactivated_at IS NULL)
         const existingDeactivation = await db
           .select()
           .from(schema.deactivated_users)

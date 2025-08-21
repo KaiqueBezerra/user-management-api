@@ -4,12 +4,15 @@
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Drizzle ORM](https://img.shields.io/badge/Drizzle%20ORM-C5F74F?style=for-the-badge&logo=drizzle&logoColor=black)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-
-API RESTful para gerenciamento de usuários, construída com um stack moderno, performático e com foco na experiência de desenvolvimento.
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger‑UI-85EA2D.svg?style=for-the-badge&logo=swagger&logoColor=white)
+![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white)
 
 ## 📜 Sobre o Projeto
 
-Esta API fornece endpoints para operações CRUD (Criar, Ler, Atualizar, Deletar) em usuários. Foi desenvolvida seguindo as melhores práticas, utilizando um sistema de plugins robusto e validação de schemas para garantir a integridade dos dados.
+API RESTful para gerenciamento de usuários, construída com um stack moderno e performático, focando na robustez e na experiência de desenvolvimento.
+
+Esta API fornece endpoints para operações CRUD (Criar, Ler, Atualizar, Deletar) em usuários, com autenticação e validação de dados. Foi desenvolvida seguindo as melhores práticas, utilizando o ecossistema do Fastify com um sistema de plugins e validação de schemas para garantir a integridade e a segurança dos dados.
 
 ## ✨ Tecnologias Principais
 
@@ -17,6 +20,21 @@ Esta API fornece endpoints para operações CRUD (Criar, Ler, Atualizar, Deletar
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/) - Para um código mais seguro, legível e escalável.
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team/) - Um ORM "headless" para TypeScript, que oferece total controle e segurança de tipos sobre as queries SQL.
 - **Validação:** [Zod](https://zod.dev/) - Para declaração e validação de schemas.
+- **Autenticação:** JWT e Bcrypt.
+
+## 📖 Endpoints da API
+
+A API utiliza o `@fastify/swagger` para gerar uma documentação interativa e completa. Após iniciar o servidor, você pode explorar todos os endpoints, seus parâmetros, schemas e respostas diretamente no seu navegador.
+
+Acesse: **http://localhost:3333/docs**
+
+## 🔑 Autenticação
+
+As rotas protegidas da API esperam um Token JWT no cabeçalho de autorização.
+
+**Formato do Cabeçalho:** `Authorization: Bearer <SEU_TOKEN_JWT>`
+
+Para obter um token, utilize o endpoint de login com as credenciais de um usuário válido.
 
 ## 🚀 Começando (Setup)
 
@@ -24,7 +42,7 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) (v22.17.0 ou superior)
+- Node.js (v22.17.0 ou superior)
 - [Docker](https://www.docker.com/) (opcional, para rodar o banco de dados)
 
 ### Instalação
@@ -57,6 +75,9 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
     # URL de conexão do Banco de Dados (PostgreSQL)
     DATABASE_URL="postgresql://docker:docker@localhost:5432/user_management_db"
+
+    # Secret Key do JWT
+    JWT_SECRET="super_secret"
     ```
 
 ## 🗄️ Migrações do Banco de Dados

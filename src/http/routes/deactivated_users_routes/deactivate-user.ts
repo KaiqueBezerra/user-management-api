@@ -52,7 +52,7 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         let result;
 
         if (existingDeactivation.length > 0) {
-          // Atualiza registro existente
+          // Update existing record
           result = await db
             .update(schema.deactivated_users)
             .set({
@@ -66,7 +66,7 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
             .where(eq(schema.deactivated_users.id, existingDeactivation[0].id))
             .returning();
         } else {
-          // Insere novo registro
+          // Insert a new record
           result = await db
             .insert(schema.deactivated_users)
             .values({

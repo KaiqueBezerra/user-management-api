@@ -15,7 +15,7 @@ export const users_deactivation_history = pgTable(
       .notNull()
       .references(() => users.id),
 
-    // Arrays de motivos e datas
+    // Reasons and dates Arrays
     deactivation_reasons: text("deactivation_reasons")
       .array()
       .notNull()

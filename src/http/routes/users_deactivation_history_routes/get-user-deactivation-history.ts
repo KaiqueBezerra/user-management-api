@@ -36,7 +36,7 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
         response: {
           200: z.union([
             userDeactivationHistorySchema,
-            z.record(z.string(), z.any()), // permite objetos com chaves dinâmicas
+            z.record(z.string(), z.any()), // allow objects with dynamic keys
           ]),
           400: z.object({
             message: z.string().default("Bad request"),
@@ -71,7 +71,7 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
         if (field) {
           const requestedFields = field.split(",").map((f) => f.trim());
 
-          // verifica se todos os campos existem no objeto
+          // Checks if all fields exist in the object
           const invalidFields = requestedFields.filter((f) => !(f in data));
 
           if (invalidFields.length > 0) {
@@ -80,7 +80,7 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
             });
           }
 
-          // monta o objeto só com os campos solicitados
+          // build an object with only the requested fields
           const filteredData: Record<string, any> = {};
           for (const f of requestedFields) {
             filteredData[f] = data[f as keyof typeof data];
@@ -89,7 +89,7 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
           return reply.status(200).send(filteredData);
         }
 
-        // se não passou parâmetro, retorna tudo
+        // If no field parameter is passed, return everything
         return reply.status(200).send(data);
       } catch (error) {
         console.error("Get user deactivation history error:", error);

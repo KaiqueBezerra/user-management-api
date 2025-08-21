@@ -56,8 +56,6 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
 
         const insertedUser = result[0];
 
-        console.log("Inserted user:", insertedUser);
-
         if (!insertedUser) {
           return reply.status(400).send({ message: "Failed to create user" });
         }
@@ -65,12 +63,6 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
         return reply.status(201).send({ userId: insertedUser.id });
       } catch (error) {
         console.error("Create user error:", error);
-
-        // // Verifica se é erro de email duplicado
-        // if (error?.cause.code === "23505") {
-        //   return reply.status(409).send({ message: "Email already exists" });
-        // }
-
         return reply.status(500).send({ message: "Internal server error" });
       }
     }
