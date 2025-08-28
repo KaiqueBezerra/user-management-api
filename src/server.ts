@@ -10,6 +10,7 @@ import { env } from "./env.ts";
 import { appRoutes } from "./http/routes/index.ts";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import fastifyRateLimit from "@fastify/rate-limit";
 import z from "zod";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
@@ -48,12 +49,23 @@ app.register(fastifyCors, {
   origin: "http://localhost:5173",
 });
 
+await app.register(fastifyRateLimit, {
+  global: false, // don't apply these settings to all the routes of the context
+  max: 3000, // default global max rate limit
+});
+
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
 
 app.get(
   "/api/health",
   {
+    config: {
+      rateLimit: {
+        max: 10,
+        timeWindow: "1 minute",
+      },
+    },
     schema: {
       tags: ["Health"],
       summary: "Health check",

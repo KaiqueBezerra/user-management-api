@@ -11,6 +11,12 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
     "/api/auth/login",
     {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
       schema: {
         tags: ["Auth"],
         summary: "Login",

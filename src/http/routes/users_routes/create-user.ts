@@ -8,6 +8,12 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
     "/api/users",
     {
+      config: {
+        rateLimit: {
+          max: 3,
+          timeWindow: "10 minute",
+        },
+      },
       schema: {
         tags: ["Users"],
         summary: "Create user",
