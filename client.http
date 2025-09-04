@@ -145,3 +145,15 @@ Authorization: Bearer {{login.response.body.token}}
 # @name deleteDeactivatedUser
 DELETE {{baseUrl}}/users/{{deactivatedId}}/deactivated
 Authorization: Bearer {{login.response.body.token}}
+
+###
+
+# Get user Gemini
+# @name getUserGemini
+POST {{baseUrl}}/users/gemini
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "email": "kaique@example.com"
+}

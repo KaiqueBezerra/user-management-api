@@ -6,6 +6,7 @@
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger‑UI-85EA2D.svg?style=for-the-badge&logo=swagger&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=gemini&logoColor=white)
 ![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white)
 
 ## 📜 Sobre o Projeto
@@ -21,6 +22,7 @@ Esta API fornece endpoints para operações CRUD (Criar, Ler, Atualizar, Deletar
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team/) - Um ORM "headless" para TypeScript, que oferece total controle e segurança de tipos sobre as queries SQL.
 - **Validação:** [Zod](https://zod.dev/) - Para declaração e validação de schemas.
 - **Autenticação:** JWT e Bcrypt.
+- **Inteligência Artificial:** [Google Gemini](https://gemini.google.com/) - Utilizado para validação de e-mails e geração de descrições dinâmicas.
 
 ## 📖 Endpoints da API
 
@@ -33,6 +35,13 @@ Acesse: **http://localhost:3333/docs**
 As rotas protegidas da API esperam um Token JWT no cabeçalho de autorização.
 
 **Formato do Cabeçalho:** `Authorization: Bearer <SEU_TOKEN_JWT>`
+
+## 🤖 Integração com Gemini
+
+A API também possui um endpoint que utiliza a IA do Google, Gemini, para realizar duas tarefas:
+
+1. **Validação de E-mails:** O Gemini analisa o e-mail informado, garantindo que ele seja interpretado e confirmado como válido antes da consulta no banco de dados.
+2. **Mensagens Humanizadas:** Após localizar o usuário, o Gemini gera uma mensagem de confirmação clara e natural, tornando as respostas da API mais compreensíveis e amigáveis.
 
 Para obter um token, utilize o endpoint de login com as credenciais de um usuário válido.
 
@@ -78,6 +87,9 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
     # Secret Key do JWT
     JWT_SECRET="super_secret"
+
+    # Chave da API do Gemini
+    GEMINI_API_KEY="SUA_CHAVE_API_AQUI"
     ```
 
 ## 🗄️ Migrações do Banco de Dados
