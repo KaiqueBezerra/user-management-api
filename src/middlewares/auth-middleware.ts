@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 interface Decoded {
   id: string;
+  name: string;
+  email: string;
   role: string;
 }
 

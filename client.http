@@ -1,8 +1,18 @@
 @baseUrl = http://localhost:3333/api
 
+###
+
 # Health
 # @name Health
 GET {{baseUrl}}/health
+
+###
+
+# Verify Token
+# @name verifyToken
+GET {{baseUrl}}/auth/validate
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
 
 ### POST
 

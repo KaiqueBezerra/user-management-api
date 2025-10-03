@@ -61,7 +61,7 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
         }
 
         const token = jwt.sign(
-          { id: user[0].id, role: user[0].role },
+          { id: user[0].id, name: user[0].name, email: user[0].email, role: user[0].role },
           env.JWT_SECRET,
           {
             expiresIn: "1h",
