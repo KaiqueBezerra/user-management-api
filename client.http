@@ -66,7 +66,7 @@ Authorization: Bearer {{login.response.body.token}}
 
 # Get All Users
 # @name getAllUsers
-GET {{baseUrl}}/users
+GET {{baseUrl}}/users?page=1&limit=10&sortBy=created_at&order=desc&role=all
 Authorization: Bearer {{login.response.body.token}}
 
 ###

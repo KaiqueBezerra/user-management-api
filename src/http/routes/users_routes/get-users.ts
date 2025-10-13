@@ -3,7 +3,7 @@ import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
 import { db } from "../../../db/connection.ts";
 import { schema } from "../../../db/schema/index.ts";
 import z from "zod";
-import { count, desc } from "drizzle-orm"; // <- importante
+import { asc, count, desc, eq } from "drizzle-orm";
 
 export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
   app.get(
@@ -13,10 +13,13 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ["Users"],
         summary: "Get users (paginated)",
-        description: "Get a paginated list of users.",
+        description: "Get a paginated list of users. Supports role filtering.",
         querystring: z.object({
           page: z.coerce.number().min(1).default(1),
           limit: z.coerce.number().min(1).max(50).default(10),
+          sortBy: z.enum(["created_at", "updated_at"]).default("created_at"),
+          order: z.enum(["asc", "desc"]).default("desc"),
+          role: z.enum(["user", "admin", "all"]).default("all"),
         }),
         response: {
           200: z.object({
@@ -42,30 +45,42 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
     },
     async (request, reply) => {
       try {
-        const { page, limit } = request.query;
+        const { page, limit, sortBy, order, role } = request.query;
         const offset = (page - 1) * limit;
 
-        // busca páginas + total em paralelo
-        const [users, totalResult] = await Promise.all([
-          db
-            .select({
-              id: schema.users.id,
-              name: schema.users.name,
-              email: schema.users.email,
-              created_at: schema.users.created_at,
-              updated_at: schema.users.updated_at,
-              role: schema.users.role,
-            })
-            .from(schema.users)
-            .orderBy(desc(schema.users.created_at))
-            .limit(limit)
-            .offset(offset),
+        const sortColumn =
+          sortBy === "updated_at" ? schema.users.updated_at : schema.users.created_at;
+        const sortDirection = order === "asc" ? asc(sortColumn) : desc(sortColumn);
 
-          // count() vem do drizzle-orm
-          db.select({ total: count() }).from(schema.users),
+        // Base query com filtro condicional
+        const baseQuery = db
+          .select({
+            id: schema.users.id,
+            name: schema.users.name,
+            email: schema.users.email,
+            role: schema.users.role,
+            created_at: schema.users.created_at,
+            updated_at: schema.users.updated_at,
+          })
+          .from(schema.users)
+          .orderBy(sortDirection)
+          .limit(limit)
+          .offset(offset);
+
+        // Se role ≠ "all", aplica filtro
+        const usersQuery =
+          role === "all" ? baseQuery : baseQuery.where(eq(schema.users.role, role));
+
+        const [users, totalResult] = await Promise.all([
+          usersQuery,
+          role === "all"
+            ? db.select({ total: count() }).from(schema.users)
+            : db
+              .select({ total: count() })
+              .from(schema.users)
+              .where(eq(schema.users.role, role)),
         ]);
 
-        // totalResult[0].total pode ser bigint/string dependendo do driver — forçamos Number
         const total = Number(totalResult[0]?.total ?? 0);
         const totalPages = Math.max(1, Math.ceil(total / limit));
 

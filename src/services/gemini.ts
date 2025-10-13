@@ -10,9 +10,9 @@ const model = "gemini-2.5-flash";
 
 export async function validateEmailWithGemini(email: string) {
   const prompt = `
-    O usuário forneceu este email: ${email}.
-    Responda apenas com o mesmo email, se ele for válido.
-    Caso não pareça um email válido, responda com "invalid".
+    The user provided this email: ${email}.
+    Respond only with the same email if it is valid.
+    If it does not seem like a valid email, respond with "invalid".
   `.trim();
 
   const response = await gemini.models.generateContent({
@@ -21,7 +21,7 @@ export async function validateEmailWithGemini(email: string) {
   });
 
   if (!response.text) {
-    throw new Error("Falha ao validar email com Gemini");
+    throw new Error("Failed to validate email with Gemini");
   }
 
   return response.text.trim().toLowerCase();
@@ -33,9 +33,9 @@ export async function describeUserWithGemini(user: {
   email: string;
 }) {
   const prompt = `
-    Gere uma frase curta em português confirmando que o usuário foi encontrado.
-    Nome: ${user.name}, Email: ${user.email}.
-    Exemplo de saída: "Usuário João Silva encontrado com sucesso."
+    Generate a short phrase confirming that the user was found.
+    Name: ${user.name}, Email: ${user.email}.
+    Example output: "User João Silva found successfully."
   `.trim();
 
   const response = await gemini.models.generateContent({
@@ -44,7 +44,7 @@ export async function describeUserWithGemini(user: {
   });
 
   if (!response.text) {
-    throw new Error("Falha ao gerar descrição com Gemini");
+    throw new Error("Failed to generate description with Gemini");
   }
 
   return response.text.trim();
