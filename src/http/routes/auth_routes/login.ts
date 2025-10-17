@@ -47,8 +47,12 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
           .from(schema.users)
           .where(eq(schema.users.email, email));
 
-        if (!user) {
+        if (user.length === 0) {
           return reply.status(401).send({ message: "Invalid email." });
+        }
+
+        if (user[0].role !== "admin") {
+          return reply.status(403).send({ message: "Access denied. Admins only." });
         }
 
         const isPasswordValid = await bcrypt.compare(

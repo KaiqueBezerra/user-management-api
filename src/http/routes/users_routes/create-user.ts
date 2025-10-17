@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { db } from "../../../db/connection.ts";
 import { schema } from "../../../db/schema/index.ts";
+import { eq } from "drizzle-orm";
 
 export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -43,6 +44,9 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
           400: z.object({
             message: z.string().default("Failed to create user"),
           }),
+          409: z.object({
+            message: z.string().default("Email already exists"),
+          }),
           500: z.object({
             message: z.string().default("Internal server error"),
           }),
@@ -53,6 +57,16 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
       const { name, email, password, role } = request.body;
 
       try {
+        const existingUser = await db
+          .select({ id: schema.users.id })
+          .from(schema.users)
+          .where(eq(schema.users.email, email))
+          .limit(1);
+
+        if (existingUser.length > 0) {
+          return reply.status(409).send({ message: "Email already exists" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const result = await db

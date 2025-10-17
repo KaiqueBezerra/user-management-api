@@ -24,6 +24,7 @@ export const getUsersByIdRoute: FastifyPluginCallbackZod = (app) => {
             email: z.email(),
             created_at: z.date(),
             updated_at: z.date().nullable(),
+            role: schema.users.role,
           }),
           404: z.object({ message: z.string().default("User not found") }),
           500: z.object({
@@ -43,6 +44,7 @@ export const getUsersByIdRoute: FastifyPluginCallbackZod = (app) => {
             email: schema.users.email,
             created_at: schema.users.created_at,
             updated_at: schema.users.updated_at,
+            role: schema.users.role,
           })
           .from(schema.users)
           .where(eq(schema.users.id, userId));
