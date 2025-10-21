@@ -22,20 +22,16 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
         body: z.object({
           name: z
             .string()
-            .min(2, "Name must be at least 2 characters")
-            .describe("User's full name"),
+            .min(2, "Name must be at least 2 characters"),
           email: z
-            .email("Invalid email format")
-            .describe("Valid email address"),
+            .email("Invalid email format"),
           password: z
             .string()
-            .min(6, "Password must be at least 6 characters")
-            .describe("Minimum 6 characters"),
+            .min(6, "Password must be at least 6 characters"),
           role: z
             .string()
             .min(2, "Role must be at least 2 characters")
             .optional()
-            .describe("User role (e.g. admin, user)"),
         }),
         response: {
           201: z.object({

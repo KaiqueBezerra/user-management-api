@@ -13,7 +13,7 @@ export const users_deactivation_history = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     user_id: uuid("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
 
     // Reasons and dates Arrays
     deactivation_reasons: text("deactivation_reasons")

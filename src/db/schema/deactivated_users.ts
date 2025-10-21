@@ -10,9 +10,9 @@ export const deactivated_users = pgTable("deactivated_users", {
     .notNull(),
   reactivated_at: timestamp("reactivated_at", { withTimezone: true }),
   deactivated_by: uuid("deactivated_by")
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  reactivated_by: uuid("reactivated_by").references(() => users.id),
+  reactivated_by: uuid("reactivated_by").references(() => users.id, { onDelete: "cascade" }),
   user_id: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),

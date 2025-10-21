@@ -1,6 +1,6 @@
 import { db } from "../../../db/connection.ts";
 import { schema } from "../../../db/schema/index.ts";
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "../../../env.ts";
@@ -20,7 +20,7 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ["Auth"],
         summary: "Login",
-        description: "Log in with email and password.",
+        description: "Log in with email and password (admins only).",
         body: z.object({
           email: z.email("Invalid email format"),
           password: z.string().min(6, "Password must be at least 6 characters"),
@@ -32,6 +32,12 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
           401: z.object({
             message: z.string().default("Invalid email or password"),
           }),
+          403: z.object({
+            message: z.string().default("Access denied. Admins only."),
+          }),
+          423: z.object({
+            message: z.string().default("Admin account is deactivated."),
+          }),
           500: z.object({
             message: z.string().default("Internal server error"),
           }),
@@ -42,34 +48,56 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
       const { email, password } = request.body;
 
       try {
-        const user = await db
-          .select()
+        const result = await db
+          .select({
+            id: schema.users.id,
+            name: schema.users.name,
+            email: schema.users.email,
+            password: schema.users.password,
+            role: schema.users.role,
+            deactivated_id: schema.deactivated_users.id,
+            reactivated_at: schema.deactivated_users.reactivated_at,
+          })
           .from(schema.users)
-          .where(eq(schema.users.email, email));
+          .leftJoin(
+            schema.deactivated_users,
+            eq(schema.deactivated_users.user_id, schema.users.id)
+          )
+          .where(eq(schema.users.email, email))
+          .limit(1);
 
-        if (user.length === 0) {
-          return reply.status(401).send({ message: "Invalid email." });
+        if (result.length === 0) {
+          return reply.status(401).send({ message: "Invalid email or password" });
         }
 
-        if (user[0].role !== "admin") {
+        const user = result[0];
+
+        if (user.role !== "admin") {
           return reply.status(403).send({ message: "Access denied. Admins only." });
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          password,
-          user[0].password
-        );
+        const isDeactivated =
+          user.deactivated_id !== null && user.reactivated_at === null;
+
+        if (isDeactivated) {
+          return reply.status(423).send({ message: "Admin account is deactivated." });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
           return reply.status(401).send({ message: "Invalid password." });
         }
 
         const token = jwt.sign(
-          { id: user[0].id, name: user[0].name, email: user[0].email, role: user[0].role },
-          env.JWT_SECRET,
           {
-            expiresIn: "1h",
-          }
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+          env.JWT_SECRET,
+          { expiresIn: "1h" }
         );
 
         return reply.status(201).send({ token });

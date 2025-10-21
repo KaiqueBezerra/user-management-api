@@ -24,7 +24,7 @@ export const getUsersByIdRoute: FastifyPluginCallbackZod = (app) => {
             email: z.email(),
             created_at: z.date(),
             updated_at: z.date().nullable(),
-            role: schema.users.role,
+            role: z.string(),
           }),
           404: z.object({ message: z.string().default("User not found") }),
           500: z.object({

@@ -109,6 +109,51 @@ Utilizei o `drizzle-kit` para gerenciar as migrações do schema do banco de dad
   npm run db:migrate
   ```
 
+- **Gerar seed:**
+  Para gerar um seed no banco de dados.
+  ```bash
+  npm run db:seed
+  ```
+
+## 🧠 Triggers e Functions do Banco de Dados
+
+Além das migrações com o Drizzle, este projeto utiliza **funções e triggers em PostgreSQL** para:
+
+- Registrar o histórico de **desativações e reativações** de usuários.
+- Atualizar automaticamente o campo `updated_at` na tabela `users`.
+
+Essas definições **não são criadas automaticamente pelas migrações**, então você precisa executá-las manualmente após configurar o banco e aplicar o schema.
+
+### 📂 Local do arquivo
+
+O script SQL está localizado em: `src/db/triggers_and_functions.sql`
+
+### 🔧 Execução do Script
+
+Exemplo com DBeaver:
+
+1. **Abra o DBeaver:**
+
+2. **Conecte-se ao seu banco PostgreSQL:**
+   Clique em Nova Conexão e selecione PostgreSQL.
+   Preencha os dados da conexão:
+
+- Host: localhost
+- Porta: 5432
+- Database: user_management_db
+- Usuário: docker
+- Senha: docker
+
+3. **Abra o arquivo SQL:**
+   Editor SQL
+   Abrir arquivo SQL
+   Cole o contéudo do arquivo localizado em: `src/db/triggers_and_functions.sql`
+   Execute o script.
+
+   **⚠️ Atenção:**
+   Antes de rodar este script, verifique se as tabelas users, deactivated_users e users_deactivation_history já foram criadas no banco de dados.
+   Caso contrário, o script falhará por falta de referência às tabelas mencionadas nas triggers e funções.
+
 ## ▶️ Executando a Aplicação
 
 - **Modo de Desenvolvimento:**
