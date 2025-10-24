@@ -30,12 +30,12 @@ export const users_deactivation_history = pgTable(
       .array()
       .default([]),
 
-    deactivations_by_admin: uuid("deactivations_by_admin")
+    deactivations_by_admin: text("deactivations_by_admin")
       .array()
       .notNull()
       .default([]),
 
-    reactivations_by_admin: uuid("reactivations_by_admin").array().default([]),
+    reactivations_by_admin: text("reactivations_by_admin").array().default([]),
   },
   (t) => [uniqueIndex("uq_user_deactivation_history_user_id").on(t.user_id)]
 );

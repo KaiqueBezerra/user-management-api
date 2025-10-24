@@ -9,7 +9,25 @@ DROP FUNCTION IF EXISTS update_updated_at_column();
 -- Function de log de desativação/reativação
 CREATE OR REPLACE FUNCTION log_user_deactivation()
 RETURNS TRIGGER AS $$
+DECLARE
+    v_deactivated_by_name TEXT;
+    v_reactivated_by_name TEXT;
 BEGIN
+    -- Buscar o nome do admin responsável pela desativação (se aplicável)
+    IF NEW.deactivated_by IS NOT NULL THEN
+        SELECT name INTO v_deactivated_by_name
+        FROM users
+        WHERE id = NEW.deactivated_by;
+    END IF;
+
+    -- Buscar o nome do admin responsável pela reativação (se aplicável)
+    IF NEW.reactivated_by IS NOT NULL THEN
+        SELECT name INTO v_reactivated_by_name
+        FROM users
+        WHERE id = NEW.reactivated_by;
+    END IF;
+
+    -- Caso de desativação
     IF NEW.deactivated_at IS NOT NULL 
        AND (OLD IS NULL OR OLD.deactivated_at IS DISTINCT FROM NEW.deactivated_at) THEN
         INSERT INTO users_deactivation_history (
@@ -22,7 +40,7 @@ BEGIN
             NEW.user_id,
             ARRAY[NEW.deactivated_reason],
             ARRAY[NEW.deactivated_at],
-            ARRAY[NEW.deactivated_by]
+            ARRAY[v_deactivated_by_name]
         )
         ON CONFLICT (user_id) DO UPDATE
         SET
@@ -30,6 +48,7 @@ BEGIN
             deactivation_dates   = users_deactivation_history.deactivation_dates || EXCLUDED.deactivation_dates,
             deactivations_by_admin = users_deactivation_history.deactivations_by_admin || EXCLUDED.deactivations_by_admin;
 
+    -- Caso de reativação
     ELSIF NEW.reactivated_at IS NOT NULL 
        AND (OLD IS NULL OR OLD.reactivated_at IS DISTINCT FROM NEW.reactivated_at) THEN
         INSERT INTO users_deactivation_history (
@@ -42,7 +61,7 @@ BEGIN
             NEW.user_id,
             ARRAY[NEW.reactivated_reason],
             ARRAY[NEW.reactivated_at],
-            ARRAY[NEW.reactivated_by]
+            ARRAY[v_reactivated_by_name]
         )
         ON CONFLICT (user_id) DO UPDATE
         SET
@@ -54,6 +73,7 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- Trigger para deactivated_users
 CREATE TRIGGER trg_log_user_deactivation
