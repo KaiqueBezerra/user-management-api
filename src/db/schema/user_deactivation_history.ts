@@ -37,5 +37,5 @@ export const users_deactivation_history = pgTable(
 
     reactivations_by_admin: text("reactivations_by_admin").array().default([]),
   },
-  (t) => [uniqueIndex("uq_user_deactivation_history_user_id").on(t.user_id)]
+  (t) => [uniqueIndex("uq_user_deactivation_history_user_id").on(t.user_id)],
 );

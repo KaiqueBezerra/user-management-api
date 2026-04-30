@@ -39,6 +39,6 @@ export const deleteUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Delete user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

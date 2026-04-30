@@ -5,7 +5,7 @@ import { getDeactivationsHistoryRoute } from "./get-users-deactivation-history.t
 export const usersDeactivationHistoryRoutes: FastifyPluginCallback = (
   app,
   _opts,
-  done
+  done,
 ) => {
   app.register(getUserDeactivationHistoryRoute);
   app.register(getDeactivationsHistoryRoute);

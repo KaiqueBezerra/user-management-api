@@ -47,7 +47,7 @@ await app.register(fastifySwaggerUi, {
 
 app.register(fastifyCors, {
   origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 });
 
 await app.register(fastifyRateLimit, {
@@ -78,7 +78,7 @@ app.get(
   },
   () => {
     return "OK";
-  }
+  },
 );
 
 app.register(appRoutes);

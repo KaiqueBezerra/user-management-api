@@ -58,6 +58,6 @@ export const getUsersByIdRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get user by id error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

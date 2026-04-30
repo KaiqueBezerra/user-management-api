@@ -17,7 +17,7 @@ const userDeactivationHistorySchema = z.object({
 });
 
 export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
-  app
+  app,
 ) => {
   app.get(
     "/api/users/:userId/deactivation-history",
@@ -95,6 +95,6 @@ export const getUserDeactivationHistoryRoute: FastifyPluginCallbackZod = (
         console.error("Get user deactivation history error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

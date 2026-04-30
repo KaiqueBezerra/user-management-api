@@ -24,7 +24,7 @@ export const getDeactivationsHistoryRoute: FastifyPluginCallbackZod = (app) => {
               reactivation_dates: z.array(z.date()).nullable(),
               deactivations_by_admin: z.array(z.string()),
               reactivations_by_admin: z.array(z.string()).nullable(),
-            })
+            }),
           ),
           500: z.object({
             message: z.string().default("Internal server error"),
@@ -43,6 +43,6 @@ export const getDeactivationsHistoryRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get deactivated users error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

@@ -94,6 +94,6 @@ export const deactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Deactivate user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

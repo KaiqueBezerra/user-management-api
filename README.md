@@ -105,6 +105,7 @@ Utilizei o `drizzle-kit` para gerenciar as migrações do schema do banco de dad
 
 - **Aplicar as migrações:**
   Para aplicar as migrações pendentes no banco de dados.
+
   ```bash
   npm run db:migrate
   ```

@@ -45,6 +45,6 @@ export const deleteDeactivationUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Delete deactivated user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

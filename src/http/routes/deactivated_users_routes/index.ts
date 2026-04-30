@@ -10,7 +10,7 @@ import { reactivateUserRoute } from "./reactivate-user.ts";
 export const deactivatedUsersRoutes: FastifyPluginCallback = (
   app,
   _opts,
-  done
+  done,
 ) => {
   app.register(getActivatedUsersRoute);
   app.register(getDeactivatedUsersRoute);

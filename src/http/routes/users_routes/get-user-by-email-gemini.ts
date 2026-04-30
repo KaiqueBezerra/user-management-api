@@ -68,7 +68,7 @@ export const getUserByEmailGeminiRoute: FastifyPluginCallbackZod = (app) => {
           .from(schema.users)
           .leftJoin(
             schema.deactivated_users,
-            eq(schema.deactivated_users.user_id, schema.users.id)
+            eq(schema.deactivated_users.user_id, schema.users.id),
           )
           .where(eq(schema.users.email, geminiEmail))
           .limit(1);
@@ -81,8 +81,7 @@ export const getUserByEmailGeminiRoute: FastifyPluginCallbackZod = (app) => {
 
         // transforma em booleano: se existe deactivated_users sem reactivated_at → true
         const isDeactivated =
-          user.deactivated != null &&
-          user.reactivated_at === null;
+          user.deactivated != null && user.reactivated_at === null;
 
         const message = await describeUserWithGemini(user);
 
@@ -102,6 +101,6 @@ export const getUserByEmailGeminiRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get user by email via Gemini error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

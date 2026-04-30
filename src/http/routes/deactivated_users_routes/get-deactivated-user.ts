@@ -60,17 +60,17 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
           .from(schema.deactivated_users)
           .innerJoin(
             userToDeactivate,
-            eq(schema.deactivated_users.user_id, userToDeactivate.id)
+            eq(schema.deactivated_users.user_id, userToDeactivate.id),
           )
           .innerJoin(
             deactivatedBy,
-            eq(schema.deactivated_users.deactivated_by, deactivatedBy.id)
+            eq(schema.deactivated_users.deactivated_by, deactivatedBy.id),
           )
           .where(
             and(
               eq(schema.deactivated_users.user_id, userId),
-              isNull(schema.deactivated_users.reactivated_at)
-            )
+              isNull(schema.deactivated_users.reactivated_at),
+            ),
           );
 
         if (result.length === 0) {
@@ -84,6 +84,6 @@ export const getDeactivatedUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get deactivated user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

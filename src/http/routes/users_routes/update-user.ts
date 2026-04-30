@@ -28,7 +28,9 @@ export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
             userId: z.uuid(),
           }),
           404: z.object({ message: z.string().default("User not found") }),
-          409: z.object({ message: z.string().default("Email already exists") }),
+          409: z.object({
+            message: z.string().default("Email already exists"),
+          }),
           500: z.object({
             message: z.string().default("Internal server error"),
           }),
@@ -46,8 +48,8 @@ export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
           .where(
             and(
               eq(schema.users.email, email),
-              not(eq(schema.users.id, userId))
-            )
+              not(eq(schema.users.id, userId)),
+            ),
           )
           .limit(1);
 
@@ -72,6 +74,6 @@ export const updateUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Update user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

@@ -24,7 +24,9 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
           deactivated: z
             .enum(["true", "false"])
             .optional()
-            .transform((val) => (val === undefined ? undefined : val === "true")),
+            .transform((val) =>
+              val === undefined ? undefined : val === "true",
+            ),
         }),
         response: {
           200: z.object({
@@ -37,7 +39,7 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
                 created_at: z.date(),
                 updated_at: z.date().nullable(),
                 deactivated: z.boolean(),
-              })
+              }),
             ),
             total: z.number(),
             page: z.number(),
@@ -55,18 +57,22 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
         const offset = (page - 1) * limit;
 
         const sortColumn =
-          sortBy === "updated_at" ? schema.users.updated_at : schema.users.created_at;
-        const sortDirection = order === "asc" ? asc(sortColumn) : desc(sortColumn);
+          sortBy === "updated_at"
+            ? schema.users.updated_at
+            : schema.users.created_at;
+        const sortDirection =
+          order === "asc" ? asc(sortColumn) : desc(sortColumn);
 
         // Base query (without where/order/limit yet)
-        const baseSelect = db.select({
-          id: schema.users.id,
-          name: schema.users.name,
-          email: schema.users.email,
-          role: schema.users.role,
-          created_at: schema.users.created_at,
-          updated_at: schema.users.updated_at,
-          deactivated: sql<boolean>`
+        const baseSelect = db
+          .select({
+            id: schema.users.id,
+            name: schema.users.name,
+            email: schema.users.email,
+            role: schema.users.role,
+            created_at: schema.users.created_at,
+            updated_at: schema.users.updated_at,
+            deactivated: sql<boolean>`
             CASE
               WHEN ${schema.deactivated_users.deactivated_at} IS NOT NULL
                 AND ${schema.deactivated_users.reactivated_at} IS NULL
@@ -74,11 +80,11 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
               ELSE false
             END
           `.as("deactivated"),
-        })
+          })
           .from(schema.users)
           .leftJoin(
             schema.deactivated_users,
-            eq(schema.deactivated_users.user_id, schema.users.id)
+            eq(schema.deactivated_users.user_id, schema.users.id),
           );
 
         // Build Drizzle filters array (without applying yet)
@@ -93,8 +99,8 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
             and(
               // deactivated_at IS NOT NULL AND reactivated_at IS NULL
               sql`${schema.deactivated_users.deactivated_at} IS NOT NULL`,
-              isNull(schema.deactivated_users.reactivated_at)
-            )
+              isNull(schema.deactivated_users.reactivated_at),
+            ),
           );
         } else if (deactivated === false) {
           filters.push(
@@ -102,8 +108,8 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
               // active when there is no deactivation record
               sql`${schema.deactivated_users.deactivated_at} IS NULL`,
               // or when there is reactivation
-              sql`${schema.deactivated_users.reactivated_at} IS NOT NULL`
-            )
+              sql`${schema.deactivated_users.reactivated_at} IS NOT NULL`,
+            ),
           );
         }
 
@@ -112,7 +118,10 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
           filters.length > 0 ? baseSelect.where(and(...filters)) : baseSelect;
 
         // Apply sorting/pagination in another final builder
-        const finalQuery = filteredQuery.orderBy(sortDirection).limit(limit).offset(offset);
+        const finalQuery = filteredQuery
+          .orderBy(sortDirection)
+          .limit(limit)
+          .offset(offset);
 
         // Count total with the same filters
         const countBase = db
@@ -120,12 +129,16 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
           .from(schema.users)
           .leftJoin(
             schema.deactivated_users,
-            eq(schema.deactivated_users.user_id, schema.users.id)
+            eq(schema.deactivated_users.user_id, schema.users.id),
           );
 
-        const countQuery = filters.length > 0 ? countBase.where(and(...filters)) : countBase;
+        const countQuery =
+          filters.length > 0 ? countBase.where(and(...filters)) : countBase;
 
-        const [users, totalResult] = await Promise.all([finalQuery, countQuery]);
+        const [users, totalResult] = await Promise.all([
+          finalQuery,
+          countQuery,
+        ]);
 
         const total = Number(totalResult[0]?.total ?? 0);
         const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -140,6 +153,6 @@ export const getUsersRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get users error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

@@ -22,7 +22,7 @@ export const getActivatedUsersRoute: FastifyPluginCallbackZod = (app) => {
               email: z.email(),
               created_at: z.date(),
               updated_at: z.date().nullable(),
-            })
+            }),
           ),
           500: z.object({
             message: z.string().default("Internal server error"),
@@ -50,11 +50,11 @@ export const getActivatedUsersRoute: FastifyPluginCallbackZod = (app) => {
                   .where(
                     and(
                       eq(schema.deactivated_users.user_id, schema.users.id),
-                      isNull(schema.deactivated_users.reactivated_at)
-                    )
-                  )
-              )
-            )
+                      isNull(schema.deactivated_users.reactivated_at),
+                    ),
+                  ),
+              ),
+            ),
           );
 
         return reply.status(200).send(result);
@@ -62,6 +62,6 @@ export const getActivatedUsersRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Get activated users error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

@@ -12,7 +12,7 @@ interface Decoded {
 export function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply,
-  done: Function
+  done: Function,
 ) {
   const token = request.headers["authorization"]?.split(" ")[1];
 

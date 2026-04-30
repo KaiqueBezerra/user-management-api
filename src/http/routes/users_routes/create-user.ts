@@ -20,18 +20,13 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
         summary: "Create user",
         description: "Create a new user.",
         body: z.object({
-          name: z
-            .string()
-            .min(2, "Name must be at least 2 characters"),
-          email: z
-            .email("Invalid email format"),
-          password: z
-            .string()
-            .min(6, "Password must be at least 6 characters"),
+          name: z.string().min(2, "Name must be at least 2 characters"),
+          email: z.email("Invalid email format"),
+          password: z.string().min(6, "Password must be at least 6 characters"),
           role: z
             .string()
             .min(2, "Role must be at least 2 characters")
-            .optional()
+            .optional(),
         }),
         response: {
           201: z.object({
@@ -81,6 +76,6 @@ export const createUsersRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Create user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

@@ -61,26 +61,32 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
           .from(schema.users)
           .leftJoin(
             schema.deactivated_users,
-            eq(schema.deactivated_users.user_id, schema.users.id)
+            eq(schema.deactivated_users.user_id, schema.users.id),
           )
           .where(eq(schema.users.email, email))
           .limit(1);
 
         if (result.length === 0) {
-          return reply.status(401).send({ message: "Invalid email or password" });
+          return reply
+            .status(401)
+            .send({ message: "Invalid email or password" });
         }
 
         const user = result[0];
 
         if (user.role !== "admin") {
-          return reply.status(403).send({ message: "Access denied. Admins only." });
+          return reply
+            .status(403)
+            .send({ message: "Access denied. Admins only." });
         }
 
         const isDeactivated =
           user.deactivated_id !== null && user.reactivated_at === null;
 
         if (isDeactivated) {
-          return reply.status(423).send({ message: "Admin account is deactivated." });
+          return reply
+            .status(423)
+            .send({ message: "Admin account is deactivated." });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -97,7 +103,7 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
             role: user.role,
           },
           env.JWT_SECRET,
-          { expiresIn: "1h" }
+          { expiresIn: "1h" },
         );
 
         return reply.status(201).send({ token });
@@ -105,6 +111,6 @@ export const authLoginRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Login error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };

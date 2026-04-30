@@ -12,7 +12,9 @@ export const deactivated_users = pgTable("deactivated_users", {
   deactivated_by: uuid("deactivated_by")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  reactivated_by: uuid("reactivated_by").references(() => users.id, { onDelete: "cascade" }),
+  reactivated_by: uuid("reactivated_by").references(() => users.id, {
+    onDelete: "cascade",
+  }),
   user_id: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),

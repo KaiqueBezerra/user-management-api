@@ -38,16 +38,15 @@ async function main() {
         email: u.email,
         password: await bcrypt.hash(u.password, 10),
         role: u.role,
-      }))
+      })),
     );
 
     // Insert users; ignore if email already exists
-    await db
-      .insert(schema.users)
-      .values(hashedValues)
-      .onConflictDoNothing();
+    await db.insert(schema.users).values(hashedValues).onConflictDoNothing();
 
-    console.log("Seed completed: inserted 3 users and 1 admin (skipping existing emails).");
+    console.log(
+      "Seed completed: inserted 3 users and 1 admin (skipping existing emails).",
+    );
   } catch (err) {
     console.error("Seed error:", err);
     process.exitCode = 1;

@@ -63,8 +63,8 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
           .where(
             and(
               eq(schema.deactivated_users.user_id, userId),
-              isNull(schema.deactivated_users.reactivated_at)
-            )
+              isNull(schema.deactivated_users.reactivated_at),
+            ),
           )
           .limit(1);
 
@@ -101,6 +101,6 @@ export const reactivateUserRoute: FastifyPluginCallbackZod = (app) => {
         console.error("Reactivate user error:", error);
         return reply.status(500).send({ message: "Internal server error" });
       }
-    }
+    },
   );
 };
