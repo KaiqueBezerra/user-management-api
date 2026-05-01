@@ -1,7 +1,7 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
-import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
-import { db } from "../../../db/connection.ts";
-import { schema } from "../../../db/schema/index.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.js";
+import { db } from "../../../db/connection.js";
+import { schema } from "../../../db/schema/index.js";
 import z from "zod";
 import { asc, count, desc, eq, isNull, and, or, sql } from "drizzle-orm";
 

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { db, sql } from "./connection.ts";
-import { schema } from "./schema/index.ts";
+import { db, sql } from "./connection.js";
+import { schema } from "./schema/index.js";
 
 async function main() {
   try {

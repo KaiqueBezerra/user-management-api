@@ -1,8 +1,8 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { db } from "../../../db/connection.ts";
-import { schema } from "../../../db/schema/index.ts";
+import { db } from "../../../db/connection.js";
+import { schema } from "../../../db/schema/index.js";
 import { eq } from "drizzle-orm";
 
 export const createUsersRoute: FastifyPluginCallbackZod = (app) => {

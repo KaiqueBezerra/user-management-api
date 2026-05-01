@@ -1,8 +1,8 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { and, eq, exists, isNull } from "drizzle-orm";
-import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
-import { schema } from "../../../db/schema/index.ts";
-import { db } from "../../../db/connection.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.js";
+import { schema } from "../../../db/schema/index.js";
+import { db } from "../../../db/connection.js";
 import z from "zod";
 
 export const getDeactivatedUsersRoute: FastifyPluginCallbackZod = (app) => {

@@ -1,14 +1,14 @@
-// src/http/routes/users/get-user-by-email-gemini.ts
+// src/http/routes/users/get-user-by-email-gemini.js
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod";
 import { eq } from "drizzle-orm";
-import { authMiddleware } from "../../../middlewares/auth-middleware.ts";
-import { db } from "../../../db/connection.ts";
-import { schema } from "../../../db/schema/index.ts";
+import { authMiddleware } from "../../../middlewares/auth-middleware.js";
+import { db } from "../../../db/connection.js";
+import { schema } from "../../../db/schema/index.js";
 import {
   describeUserWithGemini,
   validateEmailWithGemini,
-} from "../../../services/gemini.ts";
+} from "../../../services/gemini.js";
 
 export const getUserByEmailGeminiRoute: FastifyPluginCallbackZod = (app) => {
   app.post(

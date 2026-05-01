@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
-import { getUserDeactivationHistoryRoute } from "./get-user-deactivation-history.ts";
-import { getDeactivationsHistoryRoute } from "./get-users-deactivation-history.ts";
+import { getUserDeactivationHistoryRoute } from "./get-user-deactivation-history.js";
+import { getDeactivationsHistoryRoute } from "./get-users-deactivation-history.js";
 
 export const usersDeactivationHistoryRoutes: FastifyPluginCallback = (
   app,

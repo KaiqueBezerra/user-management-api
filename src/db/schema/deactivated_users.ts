@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users.ts";
+import { users } from "./users.js";
 
 export const deactivated_users = pgTable("deactivated_users", {
   id: uuid("id").primaryKey().defaultRandom(),

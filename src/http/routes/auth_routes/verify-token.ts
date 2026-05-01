@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { env } from "../../../env.ts";
+import { env } from "../../../env.js";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod";
 

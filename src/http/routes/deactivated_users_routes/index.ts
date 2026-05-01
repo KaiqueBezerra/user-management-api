@@ -1,11 +1,11 @@
 import type { FastifyPluginCallback } from "fastify";
-import { getActivatedUsersRoute } from "./get-activated-users.ts";
-import { getDeactivatedUsersRoute } from "./get-deactivated-users.ts";
-import { deactivateUserRoute } from "./deactivate-user.ts";
-import { getDeactivationsRoute } from "./get-deactivations.ts";
-import { getDeactivatedUserRoute } from "./get-deactivated-user.ts";
-import { deleteDeactivationUserRoute } from "./delete-deactivation.ts";
-import { reactivateUserRoute } from "./reactivate-user.ts";
+import { getActivatedUsersRoute } from "./get-activated-users.js";
+import { getDeactivatedUsersRoute } from "./get-deactivated-users.js";
+import { deactivateUserRoute } from "./deactivate-user.js";
+import { getDeactivationsRoute } from "./get-deactivations.js";
+import { getDeactivatedUserRoute } from "./get-deactivated-user.js";
+import { deleteDeactivationUserRoute } from "./delete-deactivation.js";
+import { reactivateUserRoute } from "./reactivate-user.js";
 
 export const deactivatedUsersRoutes: FastifyPluginCallback = (
   app,

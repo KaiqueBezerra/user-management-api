@@ -1,8 +1,8 @@
 import type { FastifyPluginCallback } from "fastify";
-import { authRoutes } from "./auth_routes/index.ts";
-import { usersRoutes } from "./users_routes/index.ts";
-import { usersDeactivationHistoryRoutes } from "./users_deactivation_history_routes/index.ts";
-import { deactivatedUsersRoutes } from "./deactivated_users_routes/index.ts";
+import { authRoutes } from "./auth_routes/index.js";
+import { usersRoutes } from "./users_routes/index.js";
+import { usersDeactivationHistoryRoutes } from "./users_deactivation_history_routes/index.js";
+import { deactivatedUsersRoutes } from "./deactivated_users_routes/index.js";
 
 export const appRoutes: FastifyPluginCallback = (app, _opts, done) => {
   app.register(authRoutes);

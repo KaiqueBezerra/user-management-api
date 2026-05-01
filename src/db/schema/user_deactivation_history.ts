@@ -5,7 +5,7 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { users } from "./users.ts";
+import { users } from "./users.js";
 
 export const users_deactivation_history = pgTable(
   "users_deactivation_history",

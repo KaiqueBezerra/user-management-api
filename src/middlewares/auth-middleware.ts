@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { env } from "../env.ts";
+import { env } from "../env.js";
 import jwt from "jsonwebtoken";
 
 interface Decoded {

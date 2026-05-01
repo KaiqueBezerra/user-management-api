@@ -1,6 +1,6 @@
 import type { FastifyPluginCallback } from "fastify";
-import { authLoginRoute } from "./login.ts";
-import { verifyTokenRoute } from "./verify-token.ts";
+import { authLoginRoute } from "./login.js";
+import { verifyTokenRoute } from "./verify-token.js";
 
 export const authRoutes: FastifyPluginCallback = (app, _opts, done) => {
   app.register(authLoginRoute);

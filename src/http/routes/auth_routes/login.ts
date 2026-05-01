@@ -1,9 +1,9 @@
-import { db } from "../../../db/connection.ts";
-import { schema } from "../../../db/schema/index.ts";
+import { db } from "../../../db/connection.js";
+import { schema } from "../../../db/schema/index.js";
 import { eq, isNull } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { env } from "../../../env.ts";
+import { env } from "../../../env.js";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod";
 
