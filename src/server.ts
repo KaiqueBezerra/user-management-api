@@ -4,6 +4,8 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
+app.get("/api/health", async () => "OK");
+
 // Start the server
 try {
   app.listen({ port: env.PORT });
