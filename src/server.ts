@@ -1,6 +1,7 @@
 import { fastify } from "fastify";
 import { env } from "./env.js";
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
@@ -8,8 +9,44 @@ import {
 import { appRoutes } from "./http/routes/index.js";
 import fastifyCors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import fastifySwagger from "@fastify/swagger";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
+
+const isStaging = process.env.VERCEL_ENV === "preview";
+
+// Swagger (OpenAPI)
+if (isStaging) {
+  await app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "User Management API",
+        description: "API de gerenciamento de usuários",
+        version: "1.0.0",
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+    },
+    transform: jsonSchemaTransform,
+  });
+
+  await app.register(fastifySwaggerUi, {
+    routePrefix: "/docs", // acess docs at http://localhost:3333/docs
+  });
+}
 
 app.register(fastifyCors, {
   origin: env.ORIGIN,
