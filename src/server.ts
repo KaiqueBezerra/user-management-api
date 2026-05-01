@@ -16,34 +16,34 @@ import z from "zod";
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 // Swagger (OpenAPI)
-await app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: "User Management API",
-      description: "API de gerenciamento de usuários",
-      version: "1.0.0",
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-  transform: jsonSchemaTransform,
-});
+// await app.register(fastifySwagger, {
+//   openapi: {
+//     info: {
+//       title: "User Management API",
+//       description: "API de gerenciamento de usuários",
+//       version: "1.0.0",
+//     },
+//     components: {
+//       securitySchemes: {
+//         bearerAuth: {
+//           type: "http",
+//           scheme: "bearer",
+//           bearerFormat: "JWT",
+//         },
+//       },
+//     },
+//     security: [
+//       {
+//         bearerAuth: [],
+//       },
+//     ],
+//   },
+//   transform: jsonSchemaTransform,
+// });
 
-await app.register(fastifySwaggerUi, {
-  routePrefix: "/docs", // acess docs at http://localhost:3333/docs
-});
+// await app.register(fastifySwaggerUi, {
+//   routePrefix: "/docs", // acess docs at http://localhost:3333/docs
+// });
 
 app.register(fastifyCors, {
   origin: env.ORIGIN,
