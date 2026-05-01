@@ -7,6 +7,7 @@ import {
 } from "fastify-type-provider-zod";
 import { appRoutes } from "./http/routes/index.js";
 import fastifyCors from "@fastify/cors";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -17,6 +18,11 @@ app.register(fastifyCors, {
 
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
+
+await app.register(fastifyRateLimit, {
+  global: false, // don't apply these settings to all the routes of the context
+  max: 3000, // default global max rate limit
+});
 
 app.get("/api/health", async () => "OK");
 
