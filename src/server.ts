@@ -1,7 +1,13 @@
 import fastify from "fastify";
+import { env } from "./env.ts";
+import { ZodTypeProvider } from "fastify-type-provider-zod";
 
-const app = fastify();
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-app.get("/api/health", async () => "OK");
-
-app.listen({ port: 3000 });
+// Start the server
+try {
+  app.listen({ port: env.PORT });
+} catch (err) {
+  app.log.error(err);
+  process.exit(1);
+}
