@@ -5,7 +5,7 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { appRoutes } from "./http/routes/index.ts";
+import { appRoutes } from "./http/routes/index.js";
 import fastifyCors from "@fastify/cors";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
