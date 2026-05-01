@@ -1,5 +1,5 @@
 import { fastify } from "fastify";
-import { env } from "./env.ts";
+import { env } from "./env.js";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
